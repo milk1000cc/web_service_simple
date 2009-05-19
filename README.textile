@@ -1,0 +1,125 @@
+h1. WebService::Simple
+
+Simple Interface To Web Services APIs (Ruby)
+"Original perl version":http://search.cpan.org/~yusukebe/WebService-Simple-0.15/lib/WebService/Simple.pm was created by Yusuke Wada.
+
+h2. Usage
+
+<pre>
+require 'rubygems'
+require 'web_service_simple'
+
+# Simple use case
+technorati = WebService::Simple.new(
+  :base_url => 'http://api.technorati.com/',
+  :param    => { :key => 'your_api_key', }
+)
+
+# send GET request to
+# http://api.technorati.com/?language=ja&key=your_api_key&query=value
+technorati.get :language => 'ja', :query => 'value'
+
+# send GET request to
+# http://api.technorati.com/extra/path?language=ja&key=your_api_key&query=value
+technorati.get 'extra/path', :language => 'ja', :query => 'value'
+</pre>
+
+h2. Methods
+
+* new(arg)
+
+<pre>
+technorati = WebService::Simple.new(
+  :base_url => 'http://api.technorati.com/',
+  :param    => { :key => 'your_api_key', },
+  # :debug    => 1
+)
+</pre>
+
+Create and return a new WebService::Simple object. "new" Method requires a base_url of Web Service API. If debug is set, dump a request URL in get or post method.
+
+* get([extra_path,] arg)
+
+<pre>
+response =
+  technorati.get(:language => 'ja', :query => 'value')
+</pre>
+
+Send GET request, and you can get the WebService::Simple::Response object. If you want to add a path to base URL, use an option parameter.
+
+<pre>
+technorati = WebService::Simple.new(
+  :base_url => 'http://api.technorati.com/',
+  :param    => { :api_key => 'your_api_key', :language => 'ja' }
+)
+response = technorati.get('search', :limit => 50)
+</pre>
+
+* base_url
+
+* base_url=
+
+* basic_params
+
+* basic_params=
+
+* logger
+
+* logger=
+
+* debug
+
+* debug=
+
+* response_parser
+
+* response_parser=
+
+h2. Subclassing
+
+For better encapsulation, you can create subclass of WebService::Simple to customize the behavior
+
+<pre>
+class WebService::Simple::Technorati < WebService::Simple
+  @@config = {
+    :base_url => 'http://api.technorati.jp',
+    :response_parser => { :module => 'XML::Technorati' }
+  }
+
+  def key_info
+    get '/keyinfo'
+  end
+
+  def search(keyword)
+    get '/search', :query => keyword
+  end
+end
+</pre>
+
+h2. Parsers
+
+Web services return their results in various different formats. Or perhaps you require more sophisticated results parsing than what WebService::Simple provides.
+
+WebService::Simple by default uses WebService::Simple::Parser::XML::Nokogiri (based on Nokogiri gem), but you can easily override that by providing a parser object to the constructor:
+
+<pre>
+service = WebService::Simple.new(
+  :response_parsrer => AVeryComplexParser.new,
+  ...
+)
+response = service.get( ... )
+thing = response.parse_response
+</pre>
+
+This allows great flexibility in handling different webservices
+
+h2. Install
+
+<pre>
+sudo gem install milk1000cc-web_service_simple --source=http://gems.github.com
+</pre>
+
+h2. Author
+
+milk1000cc &lt;<a href="mailto:info@milk1000.cc">info@milk1000.cc</a>&gt;
+Yusuke Wada
