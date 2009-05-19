@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = "web_service_simple"
-  s.version = "0.0.1"
+  s.version = "0.0.2"
   s.date = "2009-05-19"
   s.summary = "Simple Interface To Web Services APIs (Ruby)"
   s.email = "info@milk1000.cc"

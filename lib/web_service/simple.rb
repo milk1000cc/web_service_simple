@@ -8,7 +8,7 @@ require 'web_service/simple/parser'
 
 module WebService
   class Simple
-    VERSION = '0.0.1'
+    VERSION = '0.0.2'
 
     attr_accessor :base_url
     attr_accessor :basic_params
@@ -86,7 +86,7 @@ module WebService
     end
 
     def log(message)
-      logger.info "[simple_web_service] #{message}" if @debug
+      logger.info "[WebService::Simple] #{message}" if @debug
     end
   end
 end
