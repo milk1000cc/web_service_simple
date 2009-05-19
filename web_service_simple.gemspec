@@ -4,7 +4,7 @@ Gem::Specification.new do |s|
   s.date = "2009-05-19"
   s.summary = "Simple Interface To Web Services APIs (Ruby)"
   s.email = "info@milk1000.cc"
-  s.homepage = "http://github.com/git/private/web_service_simple/tree/master"
+  s.homepage = "http://github.com/milk1000cc/web_service_simple/tree/master"
   s.description = "Simple Interface To Web Services APIs (Ruby)"
   s.has_rdoc = true
   s.authors = ["milk1000cc"]
