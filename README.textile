@@ -1,6 +1,7 @@
 h1. WebService::Simple
 
 Simple Interface To Web Services APIs (Ruby)
+
 "Original perl version":http://search.cpan.org/~yusukebe/WebService-Simple-0.15/lib/WebService/Simple.pm was created by Yusuke Wada.
 
 h2. Usage
