@@ -123,4 +123,5 @@ sudo gem install milk1000cc-web_service_simple --source=http://gems.github.com
 h2. Author
 
 milk1000cc &lt;<a href="mailto:info@milk1000.cc">info@milk1000.cc</a>&gt;
+
 Yusuke Wada
