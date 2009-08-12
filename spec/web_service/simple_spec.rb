@@ -107,7 +107,7 @@ describe WebService::Simple do
     end
 
     it 'は、GET リクエストを送信して、Response オブジェクトを返すこと' do
-      FakeWeb.register_uri(:get, 'http://api.example.com?key=xxx', :string => 'ok')
+      FakeWeb.register_uri(:get, 'http://api.example.com?key=xxx', :body => 'ok')
 
       response = @service.get
       response.class.should == WebService::Simple::Response
@@ -115,7 +115,7 @@ describe WebService::Simple do
     end
 
     it 'は、リクエストの結果、レスポンスコードが 200 以外ならば、例外 ResponseCodeError が発生すること' do
-      FakeWeb.register_uri(:get, 'http://api.example.com?key=xxx', :string => 'nf', :status => ['404', 'Not Found'])
+      FakeWeb.register_uri(:get, 'http://api.example.com?key=xxx', :body => 'nf', :status => ['404', 'Not Found'])
       begin
         @service.get
       rescue => e
@@ -126,9 +126,9 @@ describe WebService::Simple do
     end
 
     it 'は、引数に応じて、よしなにリクエストすること' do
-      FakeWeb.register_uri(:get, 'http://api.example.com?key=xxx&word=yyy', :string => 'ok1')
-      FakeWeb.register_uri(:get, 'http://api.example.com/hage?key=xxx&word=yyy', :string => 'ok2')
-      FakeWeb.register_uri(:get, 'http://api.example.com/hage?key=xxx', :string => 'ok3')
+      FakeWeb.register_uri(:get, 'http://api.example.com?key=xxx&word=yyy', :body => 'ok1')
+      FakeWeb.register_uri(:get, 'http://api.example.com/hage?key=xxx&word=yyy', :body => 'ok2')
+      FakeWeb.register_uri(:get, 'http://api.example.com/hage?key=xxx', :body => 'ok3')
 
       @service.get(:word => 'yyy').content.should == 'ok1'
       @service.get('/hage', :word => 'yyy').content.should == 'ok2'
@@ -153,7 +153,7 @@ describe WebService::Simple do
         @io = StringIO.new
         @logger = Logger.new(@io)
 
-        FakeWeb.register_uri(:get, @base_url, :string => 'ok')
+        FakeWeb.register_uri(:get, @base_url, :body => 'ok')
 
         @service = WebService::Simple.new(:base_url => @base_url, :debug => true)
       end
