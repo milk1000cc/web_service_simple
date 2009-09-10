@@ -1,6 +1,7 @@
 require 'logger'
 require 'net/http'
 require 'uri'
+require 'cgi'
 
 require 'web_service/simple/response'
 require 'web_service/simple/response_code_error'
@@ -61,7 +62,7 @@ module WebService
         extra_params = args.shift if args.first.is_a?(Hash)
       end
 
-      params = @basic_params.merge(extra_params).map { |k, v| "#{ URI.escape(k.to_s) }=#{ URI.escape(v.to_s) }" } * '&'
+      params = escape_query(@basic_params.merge(extra_params))
       uri = URI("#{ @base_url }#{ extra_path }?#{ params }")
 
       log "Request URL is #{ uri }"
@@ -86,7 +87,7 @@ module WebService
         extra_params = args.shift if args.first.is_a?(Hash)
       end
 
-      params = @basic_params.merge(extra_params).map { |k, v| "#{ URI.escape(k.to_s) }=#{ URI.escape(v.to_s) }" } * '&'
+      params = escape_query(@basic_params.merge(extra_params))
       uri = URI("#{ @base_url }#{ extra_path }")
 
       log "Request URL is #{ uri } (data: #{ params })"
@@ -109,6 +110,10 @@ module WebService
 
     def log(message)
       logger.info "[WebService::Simple] #{message}" if @debug
+    end
+
+    def escape_query(query)
+      query.map { |k, v| "#{ CGI.escape(k.to_s) }=#{ CGI.escape(v.to_s) }" } * '&'
     end
   end
 end
