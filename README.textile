@@ -56,6 +56,10 @@ technorati = WebService::Simple.new(
 response = technorati.get('search', :limit => 50)
 </pre>
 
+* post([extra_path,] arg)
+
+Send POST request.
+
 * base_url
 
 * base_url=
