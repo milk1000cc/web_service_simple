@@ -175,4 +175,76 @@ describe WebService::Simple do
       end
     end
   end
+
+  describe '#post' do
+    before do
+      FakeWeb.clean_registry
+      FakeWeb.allow_net_connect = false
+    end
+
+    before do
+      @service = WebService::Simple.new(:base_url => 'http://api.example.com', :param => { :key => 'xxx' })
+    end
+
+    before do
+      @io = StringIO.new
+      @logger = Logger.new(@io)
+    end
+
+    it 'は、POST リクエストを送信して、Response オブジェクトを返すこと' do
+      FakeWeb.register_uri(:post, 'http://api.example.com', :body => 'ok')
+
+      response = @service.post
+      response.class.should == WebService::Simple::Response
+      response.content.should == 'ok'
+    end
+
+    it 'は、リクエストの結果、レスポンスコードが 200 以外ならば、例外 ResponseCodeError が発生すること' do
+      FakeWeb.register_uri(:post, 'http://api.example.com', :body => 'nf', :status => ['404', 'Not Found'])
+      begin
+        @service.post
+      rescue WebService::Simple::ResponseCodeError => e
+        e.response_code.should == '404'
+        e.response_body.should == 'nf'
+      end
+    end
+
+    it 'は、引数に応じて、よしなにリクエストすること' do
+      FakeWeb.register_uri(:post, 'http://api.example.com', :body => 'ok1')
+      FakeWeb.register_uri(:post, 'http://api.example.com/hage', :body => 'ok2')
+
+      @service.post(:word => 'yyy').content.should == 'ok1'
+      @service.post('/hage', :word => 'yyy').content.should == 'ok2'
+      @service.post('/hage').content.should == 'ok2'
+    end
+
+    it 'は、デバッグモードではないならば、ログを出力しないこと' do
+      @service.logger = @logger
+      @service.debug = false
+      @io.string.should be_empty
+    end
+
+    describe 'で、デバッグモードのとき' do
+      before do
+        FakeWeb.register_uri(:post, @base_url, :body => 'ok')
+        @service = WebService::Simple.new(:base_url => @base_url, :debug => true)
+      end
+
+      it 'は、logger に対して INFO レベルのログを出力すること' do
+        @logger.level = Logger::INFO
+        @service.logger = @logger
+        @service.post
+
+        @io.string.should =~ %r!#{ Regexp.escape(@base_url) }!
+      end
+
+      it 'は、logger が INFO より上のレベルに設定されていればログを出力しないこと' do
+        @logger.level = Logger::WARN
+        @service.logger = @logger
+        @service.post
+
+        @io.string.should be_empty
+      end
+    end
+  end
 end

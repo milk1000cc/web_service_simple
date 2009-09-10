@@ -76,6 +76,28 @@ module WebService
       Response.new(response.body, response_parser)
     end
 
+    def post(*args)
+      extra_path, extra_params = nil, {}
+
+      if args.first.is_a?(Hash)
+        extra_params = args.shift
+      else
+        extra_path = args.shift
+        extra_params = args.shift if args.first.is_a?(Hash)
+      end
+
+      params = @basic_params.merge(extra_params).map { |k, v| "#{ URI.escape(k.to_s) }=#{ URI.escape(v.to_s) }" } * '&'
+      uri = URI("#{ @base_url }#{ extra_path }")
+
+      log "Request URL is #{ uri } (data: #{ params })"
+
+      response = nil
+      Net::HTTP.start(uri.host, uri.port) { |http| response = http.post(uri.request_uri, params) }
+      raise ResponseCodeError.new(response) unless response.code == '200'
+
+      Response.new(response.body, response_parser)
+    end
+
     private
     def underscore(camel_cased_word)
       camel_cased_word.to_s.gsub(/::/, '/').
