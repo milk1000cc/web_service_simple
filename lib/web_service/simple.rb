@@ -9,7 +9,7 @@ require 'web_service/simple/parser'
 
 module WebService
   class Simple
-    VERSION = '0.0.2'
+    VERSION = '0.0.4'
 
     attr_accessor :base_url
     attr_accessor :basic_params
